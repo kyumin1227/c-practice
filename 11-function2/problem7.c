@@ -15,6 +15,15 @@ void Add(char exp1[], int len1, char exp2[], int len2, char result[]);
 // 한 자리 덧셈
 void SingleAdd(char a, char b, int *c, char *remain);
 
+// 뺄셈
+void Subtract(char exp1[], int len1, char exp2[], int len2, char result[]);
+
+// 한 자리 뺄셈
+void SingleSubtract(char a, char b, int *c, char *remain);
+
+// 비교 함수 (앞이 크면 0, 뒤가 크면 1 반환)
+int Compare(char exp1[], int len1, char exp2[], int len2);
+
 int main() {
 
     int i;
@@ -34,7 +43,13 @@ int main() {
     FlipDigit(exp1, len1);
     FlipDigit(exp2, len2);
 
-    Add(exp1, len1, exp2, len2, result);
+    printf("%d \n", Compare(exp1, len1, exp2, len2));
+
+    if (opt == '+') {
+        Add(exp1, len1, exp2, len2, result);
+    } else if (opt == '-') {
+        Subtract(exp1, len1, exp2, len2, result);
+    }
 
     if (result[Max(len1, len2)] != '0') {
         printf("%c", result[Max(len1, len2)]);
@@ -89,4 +104,59 @@ void SingleAdd(char a, char b, int *c, char *remain) {
 
     *remain = ((num1 + num2 + *c) % 10) + 48;
     *c = (num1 + num2 + *c) / 10;
+}
+
+void Subtract(char exp1[], int len1, char exp2[], int len2, char result[]) {
+
+    int i = 0;
+    int c = 0;
+
+    // 대소 비교 후 큰쪽에서 작은 쪽 빼기
+    if (Compare(exp1, len1, exp2, len2) == 0) {
+        for (i = 0; i < len1; i++) {
+            SingleSubtract(exp1[i], exp2[i], &c, &result[i]);
+        }
+    } else {
+        for (i = 0; i < len2; i++) {
+            SingleSubtract(exp2[i], exp1[i], &c, &result[i]);
+        }
+        result[len2] = '-';
+    }
+}
+
+void SingleSubtract(char a, char b, int *c, char *remain) {
+    int num1 = a - 48;
+    int num2 = b - 48;
+
+    if (num1 < 0) {num1 = 0;}
+    if (num2 < 0) {num2 = 0;}
+
+    if (num1 >= num2 + *c) {
+        *remain = num1 - (num2 + *c) + 48;
+        *c = 0;
+    } else {
+        *remain = num1 + 10 - (num2 + *c) + 48;
+        *c = 1;
+    }
+}
+
+int Compare(char exp1[], int len1, char exp2[], int len2) {
+    
+    if (len1 > len2) {
+        return 0;
+    } else if (len2 > len1) {
+        return 1;
+    }
+
+    int i;
+
+    for(i = len1 - 1; i > -1; i--) {
+        if (exp1[i] > exp2[i]) {
+            return 0;
+        } else if (exp2[i] > exp1[i]) {
+            return 1;
+        }
+    }
+
+    return 0;
 }
