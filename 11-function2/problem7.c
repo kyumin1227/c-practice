@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <time.h>
 
 // 문자열을 반대로 뒤집는 함수
 void FlipDigit(char exp1[], int len);
@@ -32,6 +33,9 @@ void SingleMultiple(char a, char b, int *c, char *remain);
 
 int main() {
 
+    clock_t start, end;
+    double duration;
+
     int i;
     int len1 = 0;
     int len2 = 0;
@@ -42,6 +46,8 @@ int main() {
     char opt;
 
     scanf("%s %c %s", exp1, &opt, exp2);
+
+    start = clock();
 
     while (exp1[len1] != '\0') {len1++;}
     while (exp2[len2] != '\0') {len2++;}
@@ -62,6 +68,12 @@ int main() {
             printf("%c", result[i]);
         }
     }
+
+    end = clock();
+
+    duration = (double)(end - start) / CLOCKS_PER_SEC;
+
+    printf("\n연산에 걸린 시간 : %f 초", duration);
     
 }
 
@@ -183,20 +195,6 @@ void Multiple(char exp1[], int len1, char exp2[], int len2, char result[]) {
 
         while (result[result_len] != '\0') {result_len++;}
         while (temp[temp_len + i] != '\0') {temp_len++;}
-
-        printf("\nresult : ");
-
-        for (j = 0; j < result_len; j++) {
-            printf("%c", result[j]);
-        }
-
-        printf("\ntemp : ");
-
-        for (j = 0; j < temp_len + i; j++) {
-            printf("%c", temp[j]);
-        }
-
-        printf("\n\n");
 
         Add(result, result_len, temp, temp_len + i, result);
     }
