@@ -24,6 +24,12 @@ void SingleSubtract(char a, char b, int *c, char *remain);
 // 비교 함수 (앞이 크면 0, 뒤가 크면 1 반환)
 int Compare(char exp1[], int len1, char exp2[], int len2);
 
+// 곱셈
+void Multiple(char exp1[], int len1, char exp2[], int len2, char result[]);
+
+// 한 자리 곱셈
+void SingleMultiple(char a, char b, int *c, char *remain);
+
 int main() {
 
     int i;
@@ -43,20 +49,18 @@ int main() {
     FlipDigit(exp1, len1);
     FlipDigit(exp2, len2);
 
-    printf("%d \n", Compare(exp1, len1, exp2, len2));
-
     if (opt == '+') {
         Add(exp1, len1, exp2, len2, result);
     } else if (opt == '-') {
         Subtract(exp1, len1, exp2, len2, result);
+    } else if (opt == '*') {
+        Multiple(exp1, len1, exp2, len2, result);
     }
 
-    if (result[Max(len1, len2)] != '0') {
-        printf("%c", result[Max(len1, len2)]);
-    }
-
-    for (i = Max(len1, len2) - 1; i > -1; i--) {
-        printf("%c", result[i]);
+    for (i = 2001; i > -1; i--) {
+        if (result[i] != '\0') {
+            printf("%c", result[i]);
+        }
     }
     
 }
@@ -91,7 +95,9 @@ void Add(char exp1[], int len1, char exp2[], int len2, char result[]) {
         SingleAdd(exp1[i], exp2[i], &c, &result[i]);
     }
 
-    result[Max(len1, len2)] = c + 48;
+    if (c > 0) {
+        result[Max(len1, len2)] = c + 48;
+    }
 }
 
 void SingleAdd(char a, char b, int *c, char *remain) {
@@ -159,4 +165,51 @@ int Compare(char exp1[], int len1, char exp2[], int len2) {
     }
 
     return 0;
+}
+
+void Multiple(char exp1[], int len1, char exp2[], int len2, char result[]) {
+
+    int i, j;
+    int c = 0;
+
+    for (i = 0; i < len2; i++) {
+        char temp[2002] = {0};
+        int temp_len = 0;
+        int result_len = 0;
+
+        for (j = 0; j < len1; j++) {
+            SingleMultiple(exp1[j], exp2[i], &c, &temp[i + j]);
+        }
+
+        while (result[result_len] != '\0') {result_len++;}
+        while (temp[temp_len + i] != '\0') {temp_len++;}
+
+        printf("\nresult : ");
+
+        for (j = 0; j < result_len; j++) {
+            printf("%c", result[j]);
+        }
+
+        printf("\ntemp : ");
+
+        for (j = 0; j < temp_len + i; j++) {
+            printf("%c", temp[j]);
+        }
+
+        printf("\n\n");
+
+        Add(result, result_len, temp, temp_len + i, result);
+    }
+    
+}
+
+void SingleMultiple(char a, char b, int *c, char *remain) {
+    int num1 = a - 48;
+    int num2 = b - 48;
+
+    if (num1 < 0) {num1 = 0;}
+    if (num2 < 0) {num2 = 0;}
+
+    *remain = ((num1 * num2 + *c) % 10) + 48;
+    *c = (num1 * num2 + *c) / 10;
 }
