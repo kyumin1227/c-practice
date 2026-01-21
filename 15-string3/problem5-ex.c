@@ -3,11 +3,12 @@
 int add_book(char (*book_name)[30], char (*auth_name)[30],
         char (*publ_name)[30], int *borrowed, int *num_total_book);
 int search_book(char (*book_name)[30], char (*auth_name)[30],
-        char (*publ_name)[30], int num_total_book);
+        char (*publ_name)[30], int num_total_book, int *borrowed);
 
 int compare(char *str1, char *str2);
 int borrow_book(int *borrowed);
 int return_book(int *borrowed);
+int find(char *str, char *target);
 
 int main() {
     int user_choice;    // 유저가 선택한 메뉴
@@ -32,7 +33,7 @@ int main() {
             add_book(book_name, auth_name, publ_name, borrowed, &num_total_book);
         } else if (user_choice == 2) {
             /* 책을 검색하는 함수 호출 */
-            search_book(book_name, auth_name, publ_name, num_total_book);
+            search_book(book_name, auth_name, publ_name, num_total_book, borrowed);
         } else if (user_choice == 3) {
             /* 책을 빌리는 함수 호출 */
             borrow_book(borrowed);
@@ -66,7 +67,7 @@ int add_book(char (*book_name)[30], char (*auth_name)[30],
 
 /* 책을 검색하는 함수 */
 int search_book(char (*book_name)[30], char (*auth_name)[30],
-        char (*publ_name)[30], int num_total_book) {
+        char (*publ_name)[30], int num_total_book, int *borrowed) {
 
     int user_input; /* 사용자의 입력을 받는다. */
     int i;
@@ -81,40 +82,21 @@ int search_book(char (*book_name)[30], char (*auth_name)[30],
     scanf("%s", user_search);
     printf("검색 결과 \n");
 
-    if (user_input == 1) {
-        /*
-        i 가 0 부터 num_total_book 까지 가면서 각각의 책 제목을
-        사용자가 입력한 검색어와 비교하고 있다.
-        */
-        for (i = 0; i < num_total_book; i++) {
-            if (compare(book_name[i], user_search)) {
-                printf("번호 : %d // 책 이름 : %s // 지은이 : %s // 출판사 : %s \n", i,
+    char (*book_info[4])[30] = {NULL, book_name, auth_name, publ_name};
+
+    for (i = 0; i < num_total_book; i++) {
+        if (find(book_info[user_input][i], user_search) != -1) {
+            printf("번호 : %d // 책 이름 : %s // 지은이 : %s // 출판사 : %s // ", i,
                 book_name[i], auth_name[i], publ_name[i]);
-            }
-        }
-    } else if (user_input == 2) {
-        /*
-        i 가 0 부터 num_total_book 까지 가면서 각각의 지은이 이름을
-        사용자가 입력한 검색어와 비교하고 있다.
-        */
-        for (i = 0; i < num_total_book; i++) {
-            if (compare(auth_name[i], user_search)) {
-                printf("번호 : %d // 책 이름 : %s // 지은이 : %s // 출판사 : %s \n", i,
-                book_name[i], auth_name[i], publ_name[i]);
-            }
-        }
-    } else if (user_input == 3) {
-        /*
-        i 가 0 부터 num_total_book 까지 가면서 각각의 출판사를
-        사용자가 입력한 검색어와 비교하고 있다.
-        */
-        for (i = 0; i < num_total_book; i++) {
-            if (compare(publ_name[i], user_search)) {
-                printf("번호 : %d // 책 이름 : %s // 지은이 : %s // 출판사 : %s \n", i,
-                book_name[i], auth_name[i], publ_name[i]);
+
+            if (borrowed[i]) {
+                printf("대출됨 \n");
+            } else {
+                printf("대출 가능 \n");
             }
         }
     }
+
     return 0;
 }
 
@@ -164,4 +146,31 @@ int return_book(int *borrowed) {
     }
 
     return 0;
+}
+
+int find(char *str, char *target) {
+    
+    int len1 = 0;
+    int len2 = 0;
+
+    while (str[len1]) {
+        
+        if (str[len1] == target[len2]) {
+            while (target[len2]) {
+                if (str[len1 + len2] != target[len2]) {
+                    len2 = 0;
+                    break;
+                }
+                len2++;
+            }
+
+            if (len2 != 0) {
+                return len1;
+            }
+        }
+
+        len1++;
+    }
+
+    return -1;
 }
