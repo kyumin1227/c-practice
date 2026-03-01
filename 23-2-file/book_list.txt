@@ -1,3 +1,5 @@
 책 이름 / 저자 이름 / 출판사 / 반납 유무 
-책1 / 저자1 / 출판사1 / NO 
-책2 / 저자2 / 출판사2 / YES 
+C언어 / Psi / itguru / NO 
+만들면서 배우는 / 톰 홈버그 / IT Leaders / YES 
+C언어 / Psi / itguru / NO 
+만들면서 배우는 / 톰 홈버그 / IT Leaders / YES 
